@@ -5,6 +5,8 @@ import { Container, PostBody, PostContent, PostTitle } from './styles';
 import axios from 'axios';
 import { IComment, IPost } from '~/types';
 import Comment from './Comment';
+import { API_BASE_URL } from '~/utils/contants';
+import NewComment from './NewComment';
 
 interface RouterParams {
   id?: string;
@@ -15,11 +17,12 @@ const commentsFetcher = (url: string): Promise<IComment[]> => axios.get(url).the
 
 export default function Post() {
   const { id } = useParams<RouterParams>();
-  const { data: post, error: postError } = useSWR(`https://jsonplaceholder.typicode.com/posts/${id}`, postFetcher);
-  const { data: comments, error: commentsError } = useSWR(
-    `https://jsonplaceholder.typicode.com/posts/${id}/comments`,
-    commentsFetcher
-  );
+  const { data: post, error: postError } = useSWR(API_BASE_URL + `/posts/${id}`, postFetcher);
+  const { data: comments, error: commentsError } = useSWR(API_BASE_URL + `/posts/${id}/comments`, commentsFetcher);
+
+  function handleAddComment(comment: IComment) {
+    // TODO : post request -> create comment
+  }
 
   return (
     <Container>
@@ -32,6 +35,7 @@ export default function Post() {
         </PostContent>
       )}
       <p>{comments?.length} comentários</p>
+      <NewComment onCommented={handleAddComment} />
       {comments?.map((comment) => {
         return <Comment key={comment.id} comment={comment} />;
       })}

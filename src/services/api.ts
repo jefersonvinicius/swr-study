@@ -1,11 +1,15 @@
 import axios from 'axios';
+import { IComment } from '~/types';
 
 function createAPI(baseURL: string) {
   const api = axios.create({ baseURL });
 
   return {
-    fetchPosts: async () => {
-      const { data } = await api.get('/posts');
+    saveComment: async (comment: IComment, postId: string): Promise<IComment> => {
+      const { data } = await api.post(`/posts/${postId}/comments`, {
+        ...comment,
+        postId,
+      });
       return data;
     },
   };

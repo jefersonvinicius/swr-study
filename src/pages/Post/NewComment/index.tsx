@@ -1,4 +1,5 @@
 import React, { FormEvent, useRef } from 'react';
+import Button from '~/components/Button';
 import { IComment } from '~/types';
 import { Container, Form, ContentField, EmailField, Title } from './styles';
 
@@ -25,6 +26,9 @@ export default function NewComment({ onCommented }: Props) {
         <Title>Fazer novo comentário:</Title>
         <EmailField ref={inputEmailRef} placeholder="Email" />
         <ContentField ref={inputContentRef} placeholder="Comentário" />
+        <Button type="submit" color="#5c6bc0">
+          Comentar
+        </Button>
       </Form>
     </Container>
   );

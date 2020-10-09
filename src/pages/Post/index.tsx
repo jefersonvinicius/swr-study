@@ -7,9 +7,10 @@ import { IComment, IPost } from '~/types';
 import Comment from './Comment';
 import { API_BASE_URL } from '~/utils/contants';
 import NewComment from './NewComment';
+import api from '~/services/api';
 
 interface RouterParams {
-  id?: string;
+  id: string;
 }
 
 const postFetcher = (url: string): Promise<IPost> => axios.get(url).then((response) => response.data);
@@ -18,10 +19,14 @@ const commentsFetcher = (url: string): Promise<IComment[]> => axios.get(url).the
 export default function Post() {
   const { id } = useParams<RouterParams>();
   const { data: post, error: postError } = useSWR(API_BASE_URL + `/posts/${id}`, postFetcher);
-  const { data: comments, error: commentsError } = useSWR(API_BASE_URL + `/posts/${id}/comments`, commentsFetcher);
+  const { data: comments, error: commentsError, mutate } = useSWR(
+    API_BASE_URL + `/posts/${id}/comments`,
+    commentsFetcher
+  );
 
-  function handleAddComment(comment: IComment) {
-    // TODO : post request -> create comment
+  async function handleAddComment(comment: IComment) {
+    mutate([comment, ...(comments || [])], false);
+    await api.saveComment(comment, id);
   }
 
   return (
